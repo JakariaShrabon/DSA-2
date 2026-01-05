@@ -1,0 +1,54 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const long long INF = 1e18;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    
+    int n, m;
+    cin >> n >> m;
+    
+    vector<vector<pair<int, long long>>> adj(n);
+    
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        long long w;
+        cin >> u >> v >> w;
+        u--;
+        v--;
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    }
+    
+    vector<long long> key(n, INF);
+    vector<bool> inMST(n, false);
+    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>> pq;
+    
+    key[0] = 0;
+    pq.push({0, 0});
+    
+    long long mst_weight = 0;
+    
+    while (!pq.empty()) {
+        auto [w, u] = pq.top();
+        pq.pop();
+        
+        if (inMST[u]) continue;
+        
+        inMST[u] = true;
+        mst_weight += w;
+        
+        for (auto [v, weight] : adj[u]) {
+            if (!inMST[v] && weight < key[v]) {
+                key[v] = weight;
+                pq.push({weight, v});
+            }
+        }
+    }
+    
+    cout << mst_weight << endl;
+    
+    return 0;
+}
